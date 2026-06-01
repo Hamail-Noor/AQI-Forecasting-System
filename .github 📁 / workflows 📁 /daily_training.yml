@@ -1,0 +1,32 @@
+name: Daily Model Training Pipeline
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs exactly at midnight UTC every single day
+  workflow_dispatch:
+
+jobs:
+  retrain-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install Core Library Dependencies
+        run: |
+          pip install google-cloud-bigquery scikit-learn tensorflow pandas numpy
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Run Model Ingestion & Optimization Retraining
+        run: |
+          python training_pipeline.py
