@@ -20,7 +20,7 @@ jobs:
 
       - name: Install Core Library Dependencies
         run: |
-          pip install google-cloud-bigquery requests tensorflow pandas numpy
+          pip install google-cloud-bigquery requests tensorflow pandas numpy pyarrow
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
