@@ -1,0 +1,35 @@
+name: Hourly Feature Pipeline
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs exactly at the start of every hour
+  workflow_dispatch:      # Allows you to trigger it manually with a button click
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install Core Library Dependencies
+        run: |
+          pip install google-cloud-bigquery requests tensorflow pandas numpy
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Execute Feature Pipeline Stream
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          AQICN_TOKEN: ${{ secrets.AQICN_TOKEN }}
+        run: |
+          python feature_pipeline.py
