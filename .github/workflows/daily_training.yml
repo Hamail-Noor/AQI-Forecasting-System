@@ -1,0 +1,31 @@
+name: Daily Model Retraining Pipeline
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs automatically at exactly 00:00 UTC (Midnight) every single day
+  workflow_dispatch:      # Allows you to trigger it manually with a button click whenever you want
+
+jobs:
+  retrain-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          pip install google-cloud-bigquery scikit-learn pandas numpy pyarrow
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Run Model Retraining Script
+        run: |
+          python training_pipeline.py
