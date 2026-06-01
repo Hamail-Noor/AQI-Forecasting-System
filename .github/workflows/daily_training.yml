@@ -19,7 +19,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install google-cloud-bigquery scikit-learn pandas numpy pyarrow
+          pip install google-cloud-bigquery scikit-learn pandas numpy pyarrow db-dtypes
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
