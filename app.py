@@ -106,3 +106,4 @@ try:
 
 except Exception as e:
     st.error(f"Serving Layer Malfunction: {e}")
+st.caption(f"☁️ Cloud Sync Ingestion Timestamp: {record['timestamp']} PKT | Infrastructure Layer: GitHub Actions Serverless CI/CD Loop")
