@@ -4,3 +4,6 @@ tensorflow
 pandas
 numpy
 pyarrow
+streamlit
+scikit-learn
+db-dtypes
