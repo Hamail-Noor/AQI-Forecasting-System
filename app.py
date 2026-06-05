@@ -3,7 +3,9 @@ import numpy as np
 import pandas as pd
 import pickle
 import os
+import json
 from google.cloud import bigquery
+from google.oauth2 import service_account
 from datetime import datetime, timedelta
 
 # --- SYSTEM REGISTRY CONFIGURATION ---
@@ -31,11 +33,17 @@ def load_champion_model():
         st.error(f"Failed to load model file 'best_aqi_model.pkl': {e}")
         return None
 
-# Ingest the absolute latest data record from BigQuery
+# --- INITIALIZE CLOUD-SAFE BIGQUERY CLIENT ---
 try:
-    client = bigquery.Client(project=PROJECT_ID)
+    # Securely extract key dictionaries straight out of the system environment vaults
+    secret_credentials = dict(st.secrets["gcp_service_account"])
+    google_oauth_credentials = service_account.Credentials.from_service_account_info(secret_credentials)
+    
+    # Initialize client using remote cloud credentials handshake
+    client = bigquery.Client(project=PROJECT_ID, credentials=google_oauth_credentials)
     table_ref = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}"
     
+    # Ingest the absolute latest data record from BigQuery
     query = f"SELECT * FROM `{table_ref}` ORDER BY timestamp DESC LIMIT 1"
     latest_df = client.query(query).to_dataframe()
     
