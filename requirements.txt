@@ -1,9 +1,9 @@
+streamlit
 google-cloud-bigquery
 requests
 tensorflow
 pandas
 numpy
-pyarrow
-streamlit
 scikit-learn
 db-dtypes
+pyarrow
