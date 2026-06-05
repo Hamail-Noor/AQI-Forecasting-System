@@ -53,8 +53,12 @@ try:
         record = latest_df.iloc[0]
         model = load_champion_model()
         
+        # Define strict ordering criteria matching the training pipeline array shape
         feature_cols = ["temperature", "humidity", "pressure", "wind_speed", "pm25", "pm10", "hour_sin", "hour_cos", "aqi_change_rate"]
-        input_vector = latest_df[feature_cols].values
+        
+        # CRITICAL FIX: Explicitly re-index the dataframe columns to enforce the precise feature matrix structure
+        aligned_df = latest_df[feature_cols].astype(float)
+        input_vector = aligned_df.values
         
         if model is not None:
             predicted_aqi = float(model.predict(input_vector)[0])
